@@ -33,7 +33,11 @@ export default function CheckoutScreen() {
 
   const handlePlaceOrder = async () => {
     if (!address.name || !address.phone || !address.address || !address.city || !address.state || !address.pincode) {
-      Alert.alert('Error', 'Please fill in all address fields');
+      Toast.show({
+        type: 'error',
+        text1: 'Incomplete Information',
+        text2: 'Please fill in all address fields',
+      });
       return;
     }
 
@@ -54,10 +58,18 @@ export default function CheckoutScreen() {
         await clearCart();
         navigation.replace('OrderSuccess', { orderId: response.data.order._id });
       } else {
-        Alert.alert('Error', response.message || 'Failed to place order');
+        Toast.show({
+          type: 'error',
+          text1: 'Order Failed',
+          text2: response.message || 'Failed to place order. Please try again',
+        });
       }
     } catch (error) {
-      Alert.alert('Error', error.message || 'Failed to place order');
+      Toast.show({
+        type: 'error',
+        text1: 'Order Failed',
+        text2: error.message || 'Failed to place order. Please try again',
+      });
     } finally {
       setLoading(false);
     }

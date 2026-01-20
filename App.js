@@ -4,7 +4,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { AuthProvider } from './src/context/AuthContext';
 import { CartProvider } from './src/context/CartContext';
 import { WishlistProvider } from './src/context/WishlistContext';
-import Toast from 'react-native-toast-message';
+import CustomToast from './src/components/CustomToast';
 import AppNavigator from './src/navigation/AppNavigator';
 
 export default function App() {
@@ -15,7 +15,7 @@ export default function App() {
           <NavigationContainer>
             <StatusBar style="dark" />
             <AppNavigator />
-            <Toast />
+            <CustomToast />
           </NavigationContainer>
         </WishlistProvider>
       </CartProvider>

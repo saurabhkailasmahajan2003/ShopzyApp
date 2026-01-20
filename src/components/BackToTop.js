@@ -12,15 +12,11 @@ export default function BackToTop({ scrollViewRef, flatListRef, scrollThreshold 
   const [fadeAnim] = useState(new Animated.Value(0));
   const [isVisible, setIsVisible] = useState(false);
 
-  // Update visibility based on showButton prop (when user scrolls down again)
+  // Update visibility based on showButton prop
   useEffect(() => {
-    if (showButton) {
-      setIsVisible(true);
-    } else {
-      // Only hide if we're at the top (not when user manually clicked)
-      // This allows the button to reappear when scrolling down
-      // The immediate hide on click is handled in scrollToTop
-    }
+    // Hide when showButton is false (user scrolled back to top)
+    // Show when showButton is true (user scrolled down past threshold)
+    setIsVisible(showButton);
   }, [showButton]);
 
   useEffect(() => {
@@ -83,6 +79,8 @@ export const useBackToTop = (scrollViewRef, scrollThreshold = 100) => {
   const [showButton, setShowButton] = useState(false);
 
   const handleScroll = (offsetY) => {
+    // Hide button when at top (offsetY <= 0 or very small)
+    // Show button only when scrolled past threshold
     const shouldShow = offsetY > scrollThreshold;
     if (shouldShow !== showButton) {
       setShowButton(shouldShow);

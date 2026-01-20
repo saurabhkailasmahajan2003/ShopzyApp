@@ -132,8 +132,8 @@ export default function ProductCard({ product, style }) {
     } catch (error) {
       Toast.show({
         type: 'error',
-        text1: 'Error',
-        text2: error.message || 'Failed to add to cart',
+        text1: 'Unable to Add Item',
+        text2: error.message || 'Something went wrong. Please try again',
       });
     }
   };
@@ -144,7 +144,7 @@ export default function ProductCard({ product, style }) {
 
   return (
     <TouchableOpacity
-      style={[styles.card, style]}
+      style={[styles.card, { width: cardWidthValue }, style]}
       onPress={handlePress}
       activeOpacity={0.9}
     >
@@ -161,6 +161,17 @@ export default function ProductCard({ product, style }) {
             <Text style={styles.discountText}>{discountPercent}% OFF</Text>
           </View>
         )}
+        {/* Add to Cart Button - Top Right Corner */}
+        <TouchableOpacity
+          style={styles.addToCartButton}
+          onPress={(e) => {
+            e.stopPropagation(); // Prevent card press
+            handleAddToCart();
+          }}
+          activeOpacity={0.8}
+        >
+          <Ionicons name="add" size={20} color="#fff" />
+        </TouchableOpacity>
         {/* Quantity Selector Button at bottom of image */}
         {size && (
           <View style={styles.quantitySelectorContainer}>
@@ -177,13 +188,6 @@ export default function ProductCard({ product, style }) {
         <Text style={styles.name} numberOfLines={2}>
           {productName}
         </Text>
-
-        {/* Description if available */}
-        {(product.description || product.product_info?.description) && (
-          <Text style={styles.description} numberOfLines={2}>
-            {product.description || product.product_info?.description}
-          </Text>
-        )}
         
         <View style={styles.ratingContainer}>
           <Ionicons name="star" size={14} color="#FFB800" />
@@ -196,11 +200,6 @@ export default function ProductCard({ product, style }) {
         )}
 
         <View style={styles.priceContainer}>
-          {hasDiscount && discountPercent > 0 && (
-            <View style={styles.discountTag}>
-              <Text style={styles.discountTagText}>{discountPercent}% OFF</Text>
-            </View>
-          )}
           <View style={styles.priceRow}>
             <Text style={styles.price}>₹{finalPrice.toLocaleString()}</Text>
             {hasDiscount && (
@@ -208,13 +207,6 @@ export default function ProductCard({ product, style }) {
             )}
           </View>
         </View>
-
-        <TouchableOpacity
-          style={styles.addButton}
-          onPress={handleAddToCart}
-        >
-          <Text style={styles.addButtonText}>ADD</Text>
-        </TouchableOpacity>
       </View>
     </TouchableOpacity>
   );
@@ -222,17 +214,14 @@ export default function ProductCard({ product, style }) {
 
 const styles = StyleSheet.create({
   card: {
-    width: cardWidth,
     backgroundColor: '#fff',
     borderRadius: 14,
     overflow: 'hidden',
     borderWidth: 0,
-    marginBottom: 12,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.08,
-    shadowRadius: 8,
-    elevation: 4,
+    marginBottom: 0, // Remove margin, let rowWrapper handle spacing
+    flex: 0, // Prevent flex stretching
+    alignSelf: 'flex-start', // Prevent stretching
+    marginHorizontal: 2, // Small horizontal margin to prevent overlap
   },
   imageContainer: {
     position: 'relative',
@@ -248,15 +237,33 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 8,
     left: 8,
-    backgroundColor: '#3B82F6',
+    backgroundColor: '#EF4444',
     paddingHorizontal: 6,
     paddingVertical: 3,
     borderRadius: 4,
+    zIndex: 1,
   },
   discountText: {
     color: '#fff',
     fontSize: 10,
-    fontWeight: '600',
+    fontWeight: '700',
+  },
+  addToCartButton: {
+    position: 'absolute',
+    top: 8,
+    right: 8,
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: '#3B82F6',
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 1,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 4,
   },
   infoContainer: {
     padding: 14,
@@ -328,23 +335,5 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#EF4444',
     textDecorationLine: 'line-through',
-  },
-  addButton: {
-    backgroundColor: '#3B82F6',
-    paddingVertical: 12,
-    borderRadius: 8,
-    alignItems: 'center',
-    marginBottom: 0,
-    shadowColor: '#3B82F6',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  addButtonText: {
-    color: '#fff',
-    fontSize: 14,
-    fontWeight: '700',
-    letterSpacing: 0.5,
   },
 });

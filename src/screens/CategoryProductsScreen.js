@@ -22,7 +22,7 @@ import BackToTop, { useBackToTop } from '../components/BackToTop';
 const { width } = Dimensions.get('window');
 const SIDEBAR_WIDTH = width * 0.20; // 20% Sidebar
 const MAIN_CONTENT_WIDTH = width * 0.80; // 80% Content
-const PRODUCT_CARD_WIDTH = (MAIN_CONTENT_WIDTH - 32) / 2; // 2 cols with padding
+const PRODUCT_CARD_WIDTH = (MAIN_CONTENT_WIDTH - 24) / 2; // 2 cols: 12px padding each side + 12px gap between cards
 
 // --- Modern Theme ---
 const COLORS = {
@@ -95,14 +95,15 @@ export default function CategoryProductsScreen() {
     setPage(1);
     setHasMore(true);
     setSelectedSubCategory(subCategory || 'all');
+    // Load products immediately on page open
     loadProducts(1, true);
   }, [category, subCategory]);
 
   // Reload products when subcategory changes (for better filtering)
   useEffect(() => {
-    // When subcategory changes for women category, reload products with the subcategory filter
-    // Only reload if category is women and we're not on initial load
-    if (category === 'women' && selectedSubCategory !== 'all' && allProducts.length > 0) {
+    // When subcategory changes for women or skincare category, reload products with the subcategory filter
+    // Only reload if category matches and we're not on initial load
+    if ((category === 'women' || category === 'skincare') && selectedSubCategory !== 'all' && allProducts.length > 0) {
       loadProducts(1, true);
     }
   }, [selectedSubCategory]);
@@ -118,6 +119,19 @@ export default function CategoryProductsScreen() {
         { name: 'Jeans', value: 'jeans' },
         { name: 'Trousers', value: 'trousers' },
         { name: 'Saree', value: 'saree' },
+      ];
+      return predefinedSubcats;
+    }
+    
+    // Predefined subcategories for skincare category
+    if (category === 'skincare') {
+      const predefinedSubcats = [
+        { name: 'All', value: 'all' },
+        { name: 'Serum', value: 'serum' },
+        { name: 'Facewash', value: 'facewash' },
+        { name: 'Sunscreen', value: 'sunscreen' },
+        { name: 'Moisturizer', value: 'moisturizer' },
+        { name: 'Cleanser', value: 'cleanser' },
       ];
       return predefinedSubcats;
     }
@@ -181,11 +195,15 @@ export default function CategoryProductsScreen() {
       if (reset) setLoading(true);
       else setLoadingMore(true);
 
-      const params = { limit: 50, page: pageNum }; // Fetch more per page to fill grid
+      const params = { limit: 20, page: pageNum }; // Smaller batches for faster initial load
       
-      // Add subcategory filter for women category
-      if (category === 'women' && selectedSubCategory && selectedSubCategory !== 'all') {
-        params.subCategory = selectedSubCategory;
+      // Add subcategory filter for women and skincare categories
+      if ((category === 'women' || category === 'skincare') && selectedSubCategory && selectedSubCategory !== 'all') {
+        if (category === 'skincare') {
+          params.category = selectedSubCategory; // Skincare uses 'category' field
+        } else {
+          params.subCategory = selectedSubCategory; // Women uses 'subCategory' field
+        }
       }
 
       let response;
@@ -214,7 +232,7 @@ export default function CategoryProductsScreen() {
         }
 
         // Pagination check
-        setHasMore(newProducts.length >= 50);
+        setHasMore(newProducts.length >= 20);
         setPage(pageNum);
       } else {
         console.log('API Response not successful:', response);
@@ -230,6 +248,7 @@ export default function CategoryProductsScreen() {
   };
 
   const loadMore = () => {
+    // Load more products on scroll
     if (!loadingMore && hasMore && !loading) {
       loadProducts(page + 1, false);
     }
@@ -341,7 +360,7 @@ export default function CategoryProductsScreen() {
                 />
               )}
               numColumns={2}
-              columnWrapperStyle={{ justifyContent: 'space-between', paddingHorizontal: 8 }}
+              columnWrapperStyle={styles.rowWrapper}
               contentContainerStyle={styles.listContent}
               showsVerticalScrollIndicator={false}
               refreshControl={
@@ -484,8 +503,14 @@ const styles = StyleSheet.create({
     width: MAIN_CONTENT_WIDTH,
     backgroundColor: COLORS.bg,
   },
+  rowWrapper: {
+    justifyContent: 'space-between',
+    paddingHorizontal: 6,
+    marginBottom: 12,
+  },
   listContent: {
-    padding: 12,
+    padding: 8,
+    paddingBottom: 100,
   },
   loadingContainer: {
     flex: 1,

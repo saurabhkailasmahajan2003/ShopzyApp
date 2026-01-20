@@ -88,18 +88,23 @@ export default function HomeScreen() {
 
       // Combine all products for "Previously bought" and other sections
       const allProducts = [];
-      if (watchesRes.success) allProducts.push(...watchesRes.data.products || []);
-      if (womenRes.success) allProducts.push(...womenRes.data.products || []);
+      
+      // Add products from each category (limit per category for better mix)
+      if (watchesRes.success) allProducts.push(...(watchesRes.data.products || []).slice(0, 3));
+      if (womenRes.success) allProducts.push(...(womenRes.data.products || []).slice(0, 3));
       if (shoesRes.success) {
         const shoesWithImages = (shoesRes.data.products || []).filter(hasValidImage);
-        allProducts.push(...shoesWithImages);
+        allProducts.push(...shoesWithImages.slice(0, 3));
       }
-      if (skincareRes.success) allProducts.push(...skincareRes.data.products || []);
-      if (lensesRes.success) allProducts.push(...lensesRes.data.products || []);
-      if (accessoriesRes.success) allProducts.push(...accessoriesRes.data.products || []);
+      if (skincareRes.success) allProducts.push(...(skincareRes.data.products || []).slice(0, 3));
+      if (lensesRes.success) allProducts.push(...(lensesRes.data.products || []).slice(0, 3));
+      if (accessoriesRes.success) allProducts.push(...(accessoriesRes.data.products || []).slice(0, 3));
 
-      // Set previously bought (mixed products)
-      setPreviouslyBought(allProducts.slice(0, 10));
+      // Shuffle products to mix categories
+      const shuffled = allProducts.sort(() => Math.random() - 0.5);
+      
+      // Set previously bought (mixed products from all categories)
+      setPreviouslyBought(shuffled.slice(0, 10));
 
       // Filter sale products (products with discount)
       const saleItems = allProducts.filter(product => {

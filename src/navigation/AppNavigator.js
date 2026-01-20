@@ -141,7 +141,7 @@ export default function AppNavigator() {
       <Stack.Screen 
         name="CategoryProducts" 
         component={CategoryProductsScreen}
-        options={({ route }) => ({ title: route.params?.category || 'Collection' })}
+        options={{ headerShown: false }} // Hide navigation header, using custom header instead
       />
       <Stack.Screen 
         name="ProductDetail" 

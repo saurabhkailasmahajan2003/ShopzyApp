@@ -16,6 +16,7 @@ import BackToTop, { useBackToTop } from '../components/BackToTop';
 import { Ionicons } from '@expo/vector-icons';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
+import Toast from 'react-native-toast-message';
 
 // --- Modern Theme Colors ---
 const COLORS = {
@@ -39,10 +40,12 @@ export default function CartScreen() {
 
   // --- Actions ---
   const handleRemove = (itemId) => {
-    Alert.alert('Remove Item', 'Remove this item from your cart?', [
-      { text: 'Cancel', style: 'cancel' },
-      { text: 'Remove', style: 'destructive', onPress: () => removeFromCart(itemId) },
-    ]);
+    removeFromCart(itemId);
+    Toast.show({
+      type: 'success',
+      text1: 'Removed',
+      text2: 'Item removed from cart',
+    });
   };
 
   const handleQuantityChange = (itemId, currentQty, change) => {
