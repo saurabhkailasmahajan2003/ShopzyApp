@@ -1,0 +1,35 @@
+{
+  "expo": {
+    "name": "Shopzy",
+    "slug": "shopzy-mobile",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "scheme": "shopzy",
+    "extra": {
+      "eas": {
+        "projectId": "your-project-id"
+      }
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.shopzy.mobile"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#ffffff"
+      },
+      "package": "com.shopzy.mobile"
+    },
+    "plugins": [
+      "expo-font"
+    ]
+  }
+}
