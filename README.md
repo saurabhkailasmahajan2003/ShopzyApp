@@ -35,9 +35,6 @@ npm run ios
 npm run android
 ```
 
-## Backend API
-
-The app connects to: `https://api.shopzyfashion.in/api`
 
 ## Project Structure
 
